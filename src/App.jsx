@@ -15,6 +15,7 @@ const queryClient = new QueryClient();
 const App = () => {
   const [data, isLoading, error] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
   const [term, setTerm] = useState('Fall')
+  const [list, setList] = useState([]);
   const schedule = data;
 
   if (isLoading) return <div>Loading...</div>;
@@ -24,7 +25,14 @@ const App = () => {
     <div className='row g-4 align-items-center'>
       <Banner title={schedule.title}/>
       <TermSelector selection={term} setSelection={setTerm} />
-      <CourseList courses={schedule.courses} term={term}/>
+      <div>
+        <ul>
+          {list.map((course, index) => (
+            <li key={index}>{course.title}</li>
+          ))}
+        </ul>
+      </div>
+      <CourseList courses={schedule.courses} term={term} list={list} setList={setList}/>
     </div>
   );
 };

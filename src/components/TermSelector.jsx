@@ -13,7 +13,7 @@ const TermButton = ({term, selection, setSelection}) => (
 
 
   const TermSelector = ({selection, setSelection}) => (
-    <div className="btn-group gap-4 mx-4">
+    <div className="btn-group gap-2 mx-4">
         <TermButton key={'Fall'} term={'Fall'} selection={selection} setSelection={setSelection} />
         <TermButton key={'Winter'} term={'Winter'} selection={selection} setSelection={setSelection} />
         <TermButton key={'Spring'} term={'Spring'} selection={selection} setSelection={setSelection} />
