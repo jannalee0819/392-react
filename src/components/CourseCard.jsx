@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 export default function CourseCard ({course, list, setList}){
 
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(list.includes(course));
 
   function onClick(){
     setActive(!active)
