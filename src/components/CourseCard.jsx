@@ -1,27 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function CourseCard ({course, list, setList}){
+export default function CourseCard ({course, selected, setSelected, conflicts}){
+  console.log(conflicts)
 
-  const [active, setActive] = useState(list.includes(course));
+  const [active, setActive] = useState(selected.includes(course));
+  const [conflict, setConflict] = useState(conflicts.includes(course));
+
+  useEffect(() => {
+    if (!selected.includes(course)){
+      setConflict(conflicts.includes(course))
+    } 
+  }, [conflicts, selected, course]);
+
+  
 
   function onClick(){
+    if (conflict) return;
+
     setActive(!active)
-    if (list.includes(course)){
-      setList((prevList) => prevList.filter((item) => item !== course));
+    if (selected.includes(course)){
+      setSelected((prevSelected) => prevSelected.filter((item) => item !== course));
     } else {
-      setList((prevList) => [...prevList, course])
+      setSelected((prevSelected) => [...prevSelected, course])
     }
     
   }
 
   return (
-    <div className={active ? "card m-1 p-2 w-100 h-100 border-1 border-primary hover-shadow position-relative" : "card m-1 p-2 w-100 h-100 hover-shadow position-relative"} onClick={() => onClick()}>
+    <div className={active ? "card m-1 p-2 w-100 h-100 border-1 border-primary hover-shadow position-relative" : conflict ? "card m-1 p-2 w-100 h-100 bg-light position-relative" : "card m-1 p-2 w-100 h-100 hover-shadow position-relative"} onClick={() => onClick()}>
       <div className="card-body">
         {active &&<span className="position-absolute top-0 start-50 translate-middle fw-semibold bg-primary text-white small rounded py-1 px-2">Selected</span>}
-        <h5 className="card-title fw-bold">{course.term} CS {course.number}</h5>
-        <p className="card-text" style={{'minHeight': '80px'}}>{course.title}</p>
+        <h5 className={conflict ? "card-title text-secondary fw-bold" : "card-title fw-bold"}>{course.term} CS {course.number}</h5>
+        <p className={conflict ? "card-text text-secondary" : "card-text"} style={{'minHeight': '80px'}}>{course.title}</p>
         <hr />
-        <p className="card-text">{course.meets}</p>
+        <p className={conflict ? "card-text text-secondary" : "card-text"}>{course.meets}</p>
       </div>
     </div>
   );

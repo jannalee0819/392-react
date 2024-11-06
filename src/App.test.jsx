@@ -1,19 +1,28 @@
-import {describe, expect, test} from 'vitest';
-import {fireEvent, render, screen} from '@testing-library/react';
+import {describe, it, vi} from 'vitest';
+import {render, screen} from '@testing-library/react';
 import App from './App';
+import {useAuthState, useDbData} from './utilities/firebase';
 
-describe('counter tests', () => {
-    
-  test("Counter should be 0 at the start", () => {
+const mockSchedule = {
+  "title": "CS Courses for 1850-1851",
+  "courses": {
+  }
+};
+
+vi.mock('./utilities/firebase');
+
+beforeEach(() => {
+  useDbData.mockReturnValue([mockSchedule, null]);
+  useAuthState.mockReturnValue([null]);
+});
+
+afterEach(() => {
+  vi.resetAllMocks();
+});
+
+describe('launching', () => {
+  it('should show the current year', () => {
     render(<App />);
-    expect(screen.getByText('count is: 0')).toBeDefined();
+    screen.getByText(/1850/);
   });
-
-  test("Counter should increment by one when clicked", async () => {
-    render(<App />);
-    const counter = screen.getByRole('button');
-    fireEvent.click(counter);
-    expect(await screen.getByText('count is: 1')).toBeDefined();
-  });
-
 });

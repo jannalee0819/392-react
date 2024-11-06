@@ -7,22 +7,23 @@ import Banner from './components/Banner.jsx';
 import CourseList from './components/CourseList.jsx';
 import TermSelector from './components/TermSelector.jsx';
 import CoursesModal from './components/CoursesModal.jsx'
+import { checkForConflicts } from './utilities/conflicts.js';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [data, isLoading, error] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
   const [term, setTerm] = useState('Fall')
-  const [list, setList] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const schedule = data;
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading data</div>;
 
-  const modalContent = list.length > 0 ? (
+  const modalContent = selected.length > 0 ? (
     <ul className="list-group">
-      {list.map((course, index) => (
+      {selected.map((course, index) => (
         <li key={index} className="list-group-item p-3">
           <strong>{course.term} CS {course.number}</strong>: {course.title} - {course.meets}
         </li>
@@ -40,7 +41,7 @@ const App = () => {
 
   return (
     <div className="container-fluid p-0">
-      <CoursesModal courses={list} open={isModalOpen} close={() => setIsModalOpen(false)}>
+      <CoursesModal courses={selected} open={isModalOpen} close={() => setIsModalOpen(false)}>
         <h4 className="fw-semibold mb-4">Your Selected Courses</h4>
         {modalContent}
       </CoursesModal>
@@ -51,7 +52,7 @@ const App = () => {
           My Schedule
         </button>
       </div>
-      <CourseList courses={schedule.courses} term={term} list={list} setList={setList}/>
+      <CourseList courses={schedule.courses} term={term} selected={selected} setSelected={setSelected}/>
     </div>
   );
 };

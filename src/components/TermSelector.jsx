@@ -6,7 +6,7 @@ const TermButton = ({term, selection, setSelection}) => (
       <input type="radio" id={term} className="btn-check" checked={term === selection} autoComplete="off"
         onChange={() => setSelection(term)} />
       <label className="btn btn-outline-primary btn-lg mb-1 py-2 px-4" htmlFor={term}>
-      {term}s
+      {term}
       </label>
     </div>
   );
@@ -17,6 +17,7 @@ const TermButton = ({term, selection, setSelection}) => (
         <TermButton key={'Fall'} term={'Fall'} selection={selection} setSelection={setSelection} />
         <TermButton key={'Winter'} term={'Winter'} selection={selection} setSelection={setSelection} />
         <TermButton key={'Spring'} term={'Spring'} selection={selection} setSelection={setSelection} />
+        <TermButton key={'All'} term={'All'} selection={selection} setSelection={setSelection} />
     </div>
   );
 
