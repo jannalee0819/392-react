@@ -1,75 +1,101 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Banner from './Banner.jsx';
+import { useFormData } from '../utilities/useFormData';
 
-export default function CourseForm ({ courses }){
+const validateCourseData = (id, value) => {
+  switch (id) {
+    case 'title':
+      return value.length < 2 
+        ? 'Course title must be at least two characters long'
+        : '';
+    case 'meets':
+      if (!value) return '';
+      
+      const meetingPattern = /^([MTWThF]+) (\d{1,2}:\d{2})-(\d{1,2}:\d{2})$/;
+      
+      if (!meetingPattern.test(value)) {
+        return 'Must contain days and start-end time, e.g., MWF 12:00-13:20';
+      }
+      return '';
+    default:
+      return '';
+  }
+};
+
+export default function CourseForm ({ courses }) {
   const { term, number } = useParams();
   
   const course = Object.values(courses).find(
     course => course.term === term && course.number === number
   );
 
-  const [formData, setFormData] = useState({
-    title: course?.title || '',
-    meets: course?.meets || ''
-  });
+  const [state, change] = useFormData(
+    validateCourseData,
+    {
+      title: course?.title || '',
+      meets: course?.meets || ''
+    }
+  );
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    if (!state.errors) {
+      console.log('Form submitted:', state.values);
+    }
   };
 
   return (
     <div className="container d-flex-column justify-content-center align-items-center">
         <Banner title={course ? `Edit Course CS ${course.number}` : 'Add Course'} />
-        <form className="mx-4 w-50" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
             <div className="mb-3">
-            <label htmlFor="title" className="form-label">Course Title</label>
+            <label htmlFor="title" className="form-label">
+                Course Title
+            </label>
             <input
-                type="text"
-                className="form-control"
                 id="title"
                 name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="Enter course title"
+                className={`form-control ${state.errors?.title ? 'is-invalid' : ''}`}
+                value={state.values.title}
+                onChange={change}
             />
+            {state.errors?.title && (
+                <div className="invalid-feedback">
+                {state.errors.title}
+                </div>
+            )}
             </div>
 
             <div className="mb-3">
-            <label htmlFor="meets" className="form-label">Meeting Times</label>
+            <label htmlFor="meets" className="form-label">
+                Meeting Times
+            </label>
             <input
-                type="text"
-                className="form-control"
                 id="meets"
                 name="meets"
-                value={formData.meets}
-                onChange={handleChange}
-                placeholder="Enter meeting times (e.g., MWF 10:00-10:50)"
+                className={`form-control ${state.errors?.meets ? 'is-invalid' : ''}`}
+                value={state.values.meets}
+                onChange={change}
             />
+            {state.errors?.meets && (
+                <div className="invalid-feedback">
+                {state.errors.meets}
+                </div>
+            )}
             </div>
 
-            <div className="mt-4">
-            <Link 
-                to="/"
-                className="btn btn-secondary me-2"
-            >
+            <div className="d-flex gap-2">
+            <Link to="/" className="btn btn-outline-secondary">
                 Cancel
             </Link>
-            <Link 
-                to="/"
-                className="btn btn-primary me-2"
-                onClick={handleSubmit}
+            <button 
+                type="submit"
+                className="btn btn-primary"
+                disabled={!!state.errors}
             >
                 Submit
-            </Link>
+            </button>
             </div>
         </form>
     </div>
