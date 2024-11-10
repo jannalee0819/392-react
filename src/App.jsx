@@ -47,7 +47,7 @@ const App = () => {
   
 
   return (
-    <div className="container-fluid p-0">
+    <div className="container">
       <Routes>
         <Route path="/" element={
           <>
