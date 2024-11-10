@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useJsonQuery } from './utilities/fetch.js';
+ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+// import { useJsonQuery } from './utilities/fetch.js';
+import fetchAll from './utilities/fetchDb.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Banner from './components/Banner.jsx';
@@ -13,14 +14,20 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [data, isLoading, error] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
-  const [term, setTerm] = useState('Fall')
+
+  const [term, setTerm] = useState('Fall');
   const [selected, setSelected] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const schedule = data;
+
+  // Replace your existing useJsonQuery with this
+  const { data: schedule, isLoading, error } = useQuery({
+    queryKey: ['courses'],
+    queryFn: fetchAll
+  });
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading data</div>;
+  if (error) return <div>Error loading data: {error.message}</div>;
+  if (!schedule) return <div>No data found</div>;
 
   const modalContent = selected.length > 0 ? (
     <ul className="list-group">
