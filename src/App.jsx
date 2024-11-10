@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
  import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 // import { useJsonQuery } from './utilities/fetch.js';
-import fetchAll from './utilities/fetchDb.js';
+import {fetchAll} from './utilities/fetchDb.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Banner from './components/Banner.jsx';
