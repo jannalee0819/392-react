@@ -1,5 +1,6 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { useState, useEffect } from "react";
+import { createUserProfile } from './profile';
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -8,8 +9,21 @@ export const useAuth = () => {
   useEffect(() => {
     const auth = getAuth();
     return auth.onAuthStateChanged((user) => {
-      setUser(user);
-      setLoading(false);
+      if (user) {
+        createUserProfile(user)
+          .then(() => {
+            setUser(user);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error handling user profile:", error);
+            setUser(user);
+            setLoading(false);
+          });
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
     });
   }, []);
 
@@ -17,7 +31,8 @@ export const useAuth = () => {
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      await createUserProfile(result.user);
     } catch (error) {
       console.error("Error signing in:", error);
     }

@@ -2,12 +2,13 @@ import { useAuth } from "../utilities/auth";
 
 const Banner = ({ title }) => {
     const { user, signIn, signOut } = useAuth();
+    
   
     return (
       <div className='d-flex justify-content-between w-100 m-4'>
         <h1 className='fs-2 fw-bold text-primar text-left'>{title}</h1>
         {user ? (
-            <div className="flex items-center gap-4">
+            <div className="d-flex items-center gap-4">
                 {user.email}
             <button
                 onClick={signOut}
